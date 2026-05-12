@@ -36,17 +36,17 @@ export function Navbar() {
 
         <nav className="hidden lg:flex items-center gap-1">
           {links.map((l) => {
-            const active = path === l.to;
-            return (
-              <Link
-                key={l.to}
-                to={l.to}
-                className={`px-2 py-1 border border-transparent hover:border-primary hover:text-primary transition ${
-                  active ? "border-primary text-primary glow-text" : "text-muted-foreground"
-                }`}
-              >
+            const targetPath = l.slug ? `/topic/${l.slug}` : l.to;
+            const active = path === targetPath;
+            const cls = `px-2 py-1 border border-transparent hover:border-primary hover:text-primary transition ${
+              active ? "border-primary text-primary glow-text" : "text-muted-foreground"
+            }`;
+            return l.slug ? (
+              <Link key={targetPath} to="/topic/$slug" params={{ slug: l.slug }} className={cls}>
                 {l.label}
               </Link>
+            ) : (
+              <Link key={targetPath} to="/" className={cls}>{l.label}</Link>
             );
           })}
         </nav>
