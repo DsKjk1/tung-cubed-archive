@@ -8,14 +8,14 @@ const themes: { id: Theme; label: string }[] = [
 ];
 
 const links = [
-  { to: "/", label: "~/HOME" },
-  { to: "/topic/environmental-issues", label: "ENV" },
-  { to: "/topic/personal-data", label: "DATA" },
-  { to: "/topic/legislation", label: "LAW" },
-  { to: "/topic/artificial-intelligence", label: "AI" },
-  { to: "/topic/intellectual-property", label: "IP" },
-  { to: "/topic/threats", label: "THRT" },
-  { to: "/topic/protecting-systems", label: "PROT" },
+  { to: "/", slug: null, label: "~/HOME" },
+  { to: "/topic/$slug", slug: "environmental-issues", label: "ENV" },
+  { to: "/topic/$slug", slug: "personal-data", label: "DATA" },
+  { to: "/topic/$slug", slug: "legislation", label: "LAW" },
+  { to: "/topic/$slug", slug: "artificial-intelligence", label: "AI" },
+  { to: "/topic/$slug", slug: "intellectual-property", label: "IP" },
+  { to: "/topic/$slug", slug: "threats", label: "THRT" },
+  { to: "/topic/$slug", slug: "protecting-systems", label: "PROT" },
 ] as const;
 
 export function Navbar() {
