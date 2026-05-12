@@ -70,15 +70,13 @@ export function Navbar() {
       <div className="lg:hidden border-t overflow-x-auto">
         <div className="flex gap-1 px-2 py-1 font-mono text-[10px] whitespace-nowrap">
           {links.map((l) => {
-            const active = path === l.to;
-            return (
-              <Link
-                key={l.to}
-                to={l.to}
-                className={`px-2 py-1 border ${active ? "border-primary text-primary" : "border-border text-muted-foreground"}`}
-              >
-                {l.label}
-              </Link>
+            const targetPath = l.slug ? `/topic/${l.slug}` : l.to;
+            const active = path === targetPath;
+            const cls = `px-2 py-1 border ${active ? "border-primary text-primary" : "border-border text-muted-foreground"}`;
+            return l.slug ? (
+              <Link key={targetPath} to="/topic/$slug" params={{ slug: l.slug }} className={cls}>{l.label}</Link>
+            ) : (
+              <Link key={targetPath} to="/" className={cls}>{l.label}</Link>
             );
           })}
         </div>
