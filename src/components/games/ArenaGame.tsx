@@ -83,9 +83,9 @@ export function ArenaGame() {
 
   // ============ WAVE START ============
   const startWaveQuestion = useCallback(() => {
-    setQuestion(pickQuestion("env"));
+    setQuestion(pickQuestionForWave(wave + 1, "env"));
     setPhase("question");
-  }, []);
+  }, [wave]);
 
   const onAnswerCorrect = () => {
     // Pick 3 random choices
