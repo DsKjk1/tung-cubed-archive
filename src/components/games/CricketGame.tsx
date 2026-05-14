@@ -160,12 +160,12 @@ export function CricketGame() {
         </div>
 
         {/* Ball */}
-        {(phase === "pitch" || phase === "result") && hit !== "miss" && (
+        {(phase === "pitch" || (phase === "result" && hit !== "miss")) && (
           <div
             className="absolute h-3 w-3 rounded-full bg-primary glow-soft"
             style={{
               left: `${ballX}%`,
-              bottom: phase === "result" && hit && hit !== "miss"
+              bottom: phase === "result" && hit !== "miss"
                 ? `${30 + distance * 0.5}%`
                 : `${28 + ballY * 0.3}%`,
               transform: "translate(-50%, 50%)",
