@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { pickQuestion, type Question } from "@/lib/questions";
+import { pickQuestionForWave, type Question } from "@/lib/questions";
 import { QuestionGate } from "@/components/games/QuestionGate";
 import sahurImg from "@/assets/mr-sahur.png";
 
@@ -38,8 +38,8 @@ interface DmgNum { x: number; y: number; v: number; t: number; crit: boolean; }
 
 interface Sparkle { x: number; y: number; t: number; color: string; }
 
-const ARENA_W = 900;
-const ARENA_H = 560;
+const ARENA_W = 1600;
+const ARENA_H = 1000;
 
 // ============ COMPONENT ============
 export function ArenaGame() {
@@ -57,7 +57,7 @@ export function ArenaGame() {
 
   // refs (mutable game state — kept outside React for perf)
   const stateRef = useRef({
-    px: ARENA_W / 2, py: ARENA_H / 2, pvx: 0, pvy: 0, pspd: 2.6,
+    px: ARENA_W / 2, py: ARENA_H / 2, pvx: 0, pvy: 0, pspd: 3.6,
     keys: new Set<string>(),
     enemies: [] as Enemy[],
     projectiles: [] as Projectile[],
@@ -72,6 +72,7 @@ export function ArenaGame() {
     shake: 0,
     hp: 100,
     runningWave: false,
+    bossWave: false,
   });
 
   // Preload Mr Sahur
@@ -83,9 +84,9 @@ export function ArenaGame() {
 
   // ============ WAVE START ============
   const startWaveQuestion = useCallback(() => {
-    setQuestion(pickQuestion("env"));
+    setQuestion(pickQuestionForWave(wave + 1, "env"));
     setPhase("question");
-  }, []);
+  }, [wave]);
 
   const onAnswerCorrect = () => {
     // Pick 3 random choices
@@ -112,11 +113,13 @@ export function ArenaGame() {
 
   const spawnWave = (w: number) => {
     setWave(w);
-    const total = 8 + w * 4;
+    const isBoss = w % 5 === 0;
+    const total = Math.round((12 + w * 6) * (isBoss ? 1.4 : 1));
     stateRef.current.waveSpawned = 0;
     stateRef.current.waveTotal = total;
     stateRef.current.waveTime = 0;
     stateRef.current.runningWave = true;
+    stateRef.current.bossWave = isBoss;
     setPhase("wave");
   };
 
@@ -162,8 +165,8 @@ export function ArenaGame() {
           }
         }
 
-        const cd = (base: number) => base * (1 - Math.min(0.45, (lvl - 1) * 0.18));
-        const dmg = (base: number) => base * (1 + (lvl - 1) * 0.4);
+        const cd = (base: number) => base * (1 - Math.min(0.55, (lvl - 1) * 0.22)) * 0.78;
+        const dmg = (base: number) => base * 1.75 * (1 + (lvl - 1) * 0.5);
 
         switch (w.id) {
           case "lasers": {
@@ -376,11 +379,17 @@ export function ArenaGame() {
       else { x = Math.random() * ARENA_W; y = ARENA_H + 20; }
       const tier = Math.random();
       const w = wave;
-      let type = "normal", hp = 20 + w * 8, spd = 0.8 + w * 0.04, r = 16;
-      if (tier > 0.95 && w > 3) { type = "elite"; hp *= 4; r = 26; spd *= 0.85; }
-      else if (tier > 0.8) { type = "tank"; hp *= 2.2; r = 22; spd *= 0.7; }
-      else if (tier > 0.6) { type = "fast"; hp *= 0.7; spd *= 1.7; r = 14; }
-      else if (tier > 0.4 && w > 2) { type = "cyber"; hp *= 1.3; spd *= 1.1; }
+      let type = "normal", hp = 22 + w * 10, spd = 0.85 + w * 0.045, r = 16;
+      const eliteChance = 0.95 - Math.min(0.15, w * 0.012);
+      const tankChance = 0.78 - Math.min(0.10, w * 0.008);
+      if (tier > eliteChance && w > 3) { type = "elite"; hp *= 6; r = 30; spd *= 0.9; }
+      else if (tier > tankChance) { type = "tank"; hp *= 2.6; r = 24; spd *= 0.75; }
+      else if (tier > 0.55) { type = "fast"; hp *= 0.75; spd *= 1.85; r = 14; }
+      else if (tier > 0.35 && w > 2) { type = "cyber"; hp *= 1.4; spd *= 1.15; }
+      // Boss wave: every 5th wave spawns extra elites at the start
+      if (s.bossWave && s.waveSpawned < 3) {
+        type = "elite"; hp = (22 + w * 10) * 9; r = 36; spd = (0.85 + w * 0.045) * 0.95;
+      }
       s.enemies.push({ x, y, hp, maxHp: hp, spd, r, type, stunUntil: 0 });
     };
 
@@ -419,7 +428,7 @@ export function ArenaGame() {
 
       // spawning
       s.waveTime += dt;
-      const spawnRate = 0.6 - Math.min(0.4, wave * 0.02);
+      const spawnRate = Math.max(0.12, 0.45 - wave * 0.018);
       if (s.waveSpawned < s.waveTotal && s.waveTime > spawnRate * (s.waveSpawned + 1)) {
         spawnEnemy(); s.waveSpawned++;
       }
@@ -555,17 +564,53 @@ export function ArenaGame() {
       ctx.translate(sk, sk);
 
       // bg
-      ctx.fillStyle = "#03060d";
+      const bgGrad = ctx.createRadialGradient(ARENA_W / 2, ARENA_H / 2, 50, ARENA_W / 2, ARENA_H / 2, ARENA_W * 0.7);
+      bgGrad.addColorStop(0, "#08131f");
+      bgGrad.addColorStop(1, "#02050a");
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, ARENA_W, ARENA_H);
+      // animated diagonal energy cracks
+      const tNow = now / 1000;
+      for (let i = 0; i < 4; i++) {
+        const cy = ((i * 250 + tNow * 30) % (ARENA_H + 200)) - 100;
+        ctx.strokeStyle = `rgba(125,243,255,${0.05 + 0.04 * Math.sin(tNow * 2 + i)})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(ARENA_W, cy + 60);
+        ctx.stroke();
+      }
       // grid
-      ctx.strokeStyle = "rgba(80,180,255,0.08)";
+      ctx.strokeStyle = "rgba(80,180,255,0.1)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < ARENA_W; x += 40) {
+      for (let x = 0; x < ARENA_W; x += 50) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ARENA_H); ctx.stroke();
       }
-      for (let y = 0; y < ARENA_H; y += 40) {
+      for (let y = 0; y < ARENA_H; y += 50) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ARENA_W, y); ctx.stroke();
       }
+      // holographic boundary walls
+      ctx.strokeStyle = `rgba(125,243,255,${0.5 + 0.2 * Math.sin(tNow * 3)})`;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(4, 4, ARENA_W - 8, ARENA_H - 8);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(125,243,255,0.25)";
+      ctx.strokeRect(20, 20, ARENA_W - 40, ARENA_H - 40);
+      // corner cyber structures
+      const corner = (cx: number, cy: number) => {
+        ctx.strokeStyle = "rgba(125,243,255,0.5)";
+        ctx.beginPath();
+        ctx.moveTo(cx - 40, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy - 40);
+        ctx.stroke();
+      };
+      corner(60, 60); corner(ARENA_W - 60, 60); corner(60, ARENA_H - 60); corner(ARENA_W - 60, ARENA_H - 60);
+      // scrolling holographic ad
+      const adText = "▸ TUNG³ NET // SAHUR.SYS ONLINE // KEEP CALCULATING // ";
+      ctx.font = `18px "Share Tech Mono", monospace`;
+      ctx.fillStyle = "rgba(125,243,255,0.18)";
+      const adX = ((tNow * 60) % 600) - 600;
+      ctx.fillText(adText + adText, -adX, 30);
+      ctx.fillText(adText + adText, -adX + 200, ARENA_H - 14);
 
       // shield aura render
       const shield = ownedRef.find((w) => w.id === "shield");
@@ -775,13 +820,7 @@ export function ArenaGame() {
         )}
         {phase === "between" && (
           <Overlay>
-            <div className="ascii-frame bg-card/95 p-5 text-center max-w-md glow-border">
-              <div className="text-xl text-primary glow-text mb-2">WAVE {wave} CLEARED</div>
-              <p className="text-xs text-muted-foreground mb-4">Recover. Then face the next wave.</p>
-              <button onClick={startWaveQuestion} className="border border-primary px-4 py-2 text-primary hover:glow-border">
-                ▸ NEXT QUESTION
-              </button>
-            </div>
+            <BetweenWaves wave={wave} bossNext={(wave + 1) % 5 === 0} onContinue={startWaveQuestion} />
           </Overlay>
         )}
         {phase === "dead" && (
@@ -817,6 +856,27 @@ function Overlay({ children }: { children: React.ReactNode }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
       {children}
+    </div>
+  );
+}
+
+function BetweenWaves({ wave, bossNext, onContinue }: { wave: number; bossNext: boolean; onContinue: () => void }) {
+  const [count, setCount] = useState(3);
+  useEffect(() => {
+    if (count <= 0) { onContinue(); return; }
+    const t = setTimeout(() => setCount((c) => c - 1), 800);
+    return () => clearTimeout(t);
+  }, [count, onContinue]);
+  return (
+    <div className="ascii-frame bg-card/95 p-5 text-center max-w-md glow-border animate-fade-in">
+      <div className="text-xl text-primary glow-text mb-1">▸ WAVE {wave} CLEARED</div>
+      <div className={`text-xs mb-3 ${bossNext ? "text-destructive glow-text" : "text-muted-foreground"}`}>
+        {bossNext ? `// WARNING: ELITE WAVE ${wave + 1} INCOMING //` : `// next briefing in ${count}s //`}
+      </div>
+      <div className="text-5xl font-display text-primary glow-text mb-3">{count}</div>
+      <button onClick={onContinue} className="border border-primary px-4 py-2 text-primary hover:glow-border text-sm">
+        ▸ SKIP
+      </button>
     </div>
   );
 }
