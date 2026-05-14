@@ -165,8 +165,8 @@ export function ArenaGame() {
           }
         }
 
-        const cd = (base: number) => base * (1 - Math.min(0.45, (lvl - 1) * 0.18));
-        const dmg = (base: number) => base * (1 + (lvl - 1) * 0.4);
+        const cd = (base: number) => base * (1 - Math.min(0.55, (lvl - 1) * 0.22)) * 0.78;
+        const dmg = (base: number) => base * 1.75 * (1 + (lvl - 1) * 0.5);
 
         switch (w.id) {
           case "lasers": {
