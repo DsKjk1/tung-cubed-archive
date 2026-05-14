@@ -38,8 +38,8 @@ interface DmgNum { x: number; y: number; v: number; t: number; crit: boolean; }
 
 interface Sparkle { x: number; y: number; t: number; color: string; }
 
-const ARENA_W = 900;
-const ARENA_H = 560;
+const ARENA_W = 1600;
+const ARENA_H = 1000;
 
 // ============ COMPONENT ============
 export function ArenaGame() {
