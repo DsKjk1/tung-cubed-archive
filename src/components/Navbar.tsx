@@ -16,6 +16,7 @@ const links = [
   { to: "/topic/$slug", slug: "intellectual-property", label: "IP" },
   { to: "/topic/$slug", slug: "threats", label: "THRT" },
   { to: "/topic/$slug", slug: "protecting-systems", label: "PROT" },
+  { to: "/games", slug: null, label: "◆ARCADE" },
 ] as const;
 
 export function Navbar() {
