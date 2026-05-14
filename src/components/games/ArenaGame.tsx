@@ -428,7 +428,7 @@ export function ArenaGame() {
 
       // spawning
       s.waveTime += dt;
-      const spawnRate = 0.6 - Math.min(0.4, wave * 0.02);
+      const spawnRate = Math.max(0.12, 0.45 - wave * 0.018);
       if (s.waveSpawned < s.waveTotal && s.waveTime > spawnRate * (s.waveSpawned + 1)) {
         spawnEnemy(); s.waveSpawned++;
       }
