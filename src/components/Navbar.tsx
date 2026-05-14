@@ -46,6 +46,8 @@ export function Navbar() {
               <Link key={targetPath} to="/topic/$slug" params={{ slug: l.slug }} className={cls}>
                 {l.label}
               </Link>
+            ) : l.to === "/games" ? (
+              <Link key={targetPath} to="/games" className={cls}>{l.label}</Link>
             ) : (
               <Link key={targetPath} to="/" className={cls}>{l.label}</Link>
             );
