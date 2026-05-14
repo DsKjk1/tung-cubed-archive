@@ -113,11 +113,13 @@ export function ArenaGame() {
 
   const spawnWave = (w: number) => {
     setWave(w);
-    const total = 8 + w * 4;
+    const isBoss = w % 5 === 0;
+    const total = Math.round((12 + w * 6) * (isBoss ? 1.4 : 1));
     stateRef.current.waveSpawned = 0;
     stateRef.current.waveTotal = total;
     stateRef.current.waveTime = 0;
     stateRef.current.runningWave = true;
+    stateRef.current.bossWave = isBoss;
     setPhase("wave");
   };
 
