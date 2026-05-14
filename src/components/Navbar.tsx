@@ -78,6 +78,8 @@ export function Navbar() {
             const cls = `px-2 py-1 border ${active ? "border-primary text-primary" : "border-border text-muted-foreground"}`;
             return l.slug ? (
               <Link key={targetPath} to="/topic/$slug" params={{ slug: l.slug }} className={cls}>{l.label}</Link>
+            ) : l.to === "/games" ? (
+              <Link key={targetPath} to="/games" className={cls}>{l.label}</Link>
             ) : (
               <Link key={targetPath} to="/" className={cls}>{l.label}</Link>
             );
