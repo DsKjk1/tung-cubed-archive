@@ -59,8 +59,8 @@
   --ring: oklch(0.72 0.22 245);
   --glow: oklch(0.72 0.22 245);
 
-  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-display: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: "Share Tech Mono", "VT323", ui-monospace, Menlo, Consolas, monospace;
+  --font-display: "VT323", "Share Tech Mono", ui-monospace, monospace;
 
   --grid-color: oklch(0.72 0.22 245 / 0.08);
   --scanline-opacity: 0.04;
@@ -134,8 +134,13 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-mono);
-    font-feature-settings: "ss01", "ss02";
+    font-size: 16px;
+    letter-spacing: 0.02em;
     -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
   }
 
   ::selection {

@@ -46,6 +46,9 @@ function Index() {
             <Link to="/topic/environmental-issues" className="border border-primary px-4 py-2 text-primary hover:glow-border transition">
               ▸ ENTER MODULE 01: ENVIRONMENT
             </Link>
+            <Link to="/games" className="border border-primary px-4 py-2 text-primary hover:glow-border transition glow-border">
+              ◆ HIDDEN ARCADE
+            </Link>
             <a href="#modules" className="border border-border px-4 py-2 hover:border-primary hover:text-primary">
               ▾ list all directories
             </a>
@@ -93,6 +96,20 @@ function Index() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Arcade banner */}
+        <div className="mt-10 grid gap-3 md:grid-cols-2">
+          <Link to="/cricket" className="ascii-frame block bg-card/40 p-4 hover:glow-border hover:bg-card transition group">
+            <div className="text-[10px] text-muted-foreground">simulation_01 • hidden</div>
+            <div className="mt-1 text-xl text-primary glow-text font-display">▸ CRICKET DEFENSE</div>
+            <div className="mt-1 text-[11px] text-muted-foreground">Time your swing. Mr Sahur bowls. Perfect timing → slow-mo combos.</div>
+          </Link>
+          <Link to="/arena" className="ascii-frame block bg-card/40 p-4 hover:glow-border hover:bg-card transition group">
+            <div className="text-[10px] text-muted-foreground">simulation_02 • hidden</div>
+            <div className="mt-1 text-xl text-primary glow-text font-display">▸ SAHUR SURVIVAL ARENA</div>
+            <div className="mt-1 text-[11px] text-muted-foreground">20 waves • 12 weapons • answer to upgrade.</div>
+          </Link>
         </div>
       </section>
     </main>
