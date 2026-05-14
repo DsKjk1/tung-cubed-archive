@@ -859,3 +859,24 @@ function Overlay({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+function BetweenWaves({ wave, bossNext, onContinue }: { wave: number; bossNext: boolean; onContinue: () => void }) {
+  const [count, setCount] = useState(3);
+  useEffect(() => {
+    if (count <= 0) { onContinue(); return; }
+    const t = setTimeout(() => setCount((c) => c - 1), 800);
+    return () => clearTimeout(t);
+  }, [count, onContinue]);
+  return (
+    <div className="ascii-frame bg-card/95 p-5 text-center max-w-md glow-border animate-fade-in">
+      <div className="text-xl text-primary glow-text mb-1">▸ WAVE {wave} CLEARED</div>
+      <div className={`text-xs mb-3 ${bossNext ? "text-destructive glow-text" : "text-muted-foreground"}`}>
+        {bossNext ? `// WARNING: ELITE WAVE ${wave + 1} INCOMING //` : `// next briefing in ${count}s //`}
+      </div>
+      <div className="text-5xl font-display text-primary glow-text mb-3">{count}</div>
+      <button onClick={onContinue} className="border border-primary px-4 py-2 text-primary hover:glow-border text-sm">
+        ▸ SKIP
+      </button>
+    </div>
+  );
+}
