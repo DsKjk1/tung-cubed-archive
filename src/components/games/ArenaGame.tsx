@@ -820,13 +820,7 @@ export function ArenaGame() {
         )}
         {phase === "between" && (
           <Overlay>
-            <div className="ascii-frame bg-card/95 p-5 text-center max-w-md glow-border">
-              <div className="text-xl text-primary glow-text mb-2">WAVE {wave} CLEARED</div>
-              <p className="text-xs text-muted-foreground mb-4">Recover. Then face the next wave.</p>
-              <button onClick={startWaveQuestion} className="border border-primary px-4 py-2 text-primary hover:glow-border">
-                ▸ NEXT QUESTION
-              </button>
-            </div>
+            <BetweenWaves wave={wave} bossNext={(wave + 1) % 5 === 0} onContinue={startWaveQuestion} />
           </Overlay>
         )}
         {phase === "dead" && (
