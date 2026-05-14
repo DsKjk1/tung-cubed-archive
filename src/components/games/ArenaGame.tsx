@@ -379,11 +379,17 @@ export function ArenaGame() {
       else { x = Math.random() * ARENA_W; y = ARENA_H + 20; }
       const tier = Math.random();
       const w = wave;
-      let type = "normal", hp = 20 + w * 8, spd = 0.8 + w * 0.04, r = 16;
-      if (tier > 0.95 && w > 3) { type = "elite"; hp *= 4; r = 26; spd *= 0.85; }
-      else if (tier > 0.8) { type = "tank"; hp *= 2.2; r = 22; spd *= 0.7; }
-      else if (tier > 0.6) { type = "fast"; hp *= 0.7; spd *= 1.7; r = 14; }
-      else if (tier > 0.4 && w > 2) { type = "cyber"; hp *= 1.3; spd *= 1.1; }
+      let type = "normal", hp = 22 + w * 10, spd = 0.85 + w * 0.045, r = 16;
+      const eliteChance = 0.95 - Math.min(0.15, w * 0.012);
+      const tankChance = 0.78 - Math.min(0.10, w * 0.008);
+      if (tier > eliteChance && w > 3) { type = "elite"; hp *= 6; r = 30; spd *= 0.9; }
+      else if (tier > tankChance) { type = "tank"; hp *= 2.6; r = 24; spd *= 0.75; }
+      else if (tier > 0.55) { type = "fast"; hp *= 0.75; spd *= 1.85; r = 14; }
+      else if (tier > 0.35 && w > 2) { type = "cyber"; hp *= 1.4; spd *= 1.15; }
+      // Boss wave: every 5th wave spawns extra elites at the start
+      if (s.bossWave && s.waveSpawned < 3) {
+        type = "elite"; hp = (22 + w * 10) * 9; r = 36; spd = (0.85 + w * 0.045) * 0.95;
+      }
       s.enemies.push({ x, y, hp, maxHp: hp, spd, r, type, stunUntil: 0 });
     };
 
