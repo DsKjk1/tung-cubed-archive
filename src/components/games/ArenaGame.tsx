@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { pickQuestion, type Question } from "@/lib/questions";
+import { pickQuestionForWave, type Question } from "@/lib/questions";
 import { QuestionGate } from "@/components/games/QuestionGate";
 import sahurImg from "@/assets/mr-sahur.png";
 
