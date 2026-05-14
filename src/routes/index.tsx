@@ -46,6 +46,9 @@ function Index() {
             <Link to="/topic/environmental-issues" className="border border-primary px-4 py-2 text-primary hover:glow-border transition">
               ▸ ENTER MODULE 01: ENVIRONMENT
             </Link>
+            <Link to="/games" className="border border-primary px-4 py-2 text-primary hover:glow-border transition glow-border">
+              ◆ HIDDEN ARCADE
+            </Link>
             <a href="#modules" className="border border-border px-4 py-2 hover:border-primary hover:text-primary">
               ▾ list all directories
             </a>
