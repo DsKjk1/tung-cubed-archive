@@ -153,14 +153,14 @@ export function ArenaGame() {
         w.t += dt;
         const lvl = w.level;
         // find nearest
-        const nearest = (() => {
-          let best: Enemy | null = null; let bd = Infinity;
-          s.enemies.forEach((e) => {
+        let nearest: Enemy | null = null;
+        {
+          let bd = Infinity;
+          for (const e of s.enemies) {
             const d = (e.x - s.px) ** 2 + (e.y - s.py) ** 2;
-            if (d < bd) { bd = d; best = e; }
-          });
-          return best;
-        })();
+            if (d < bd) { bd = d; nearest = e; }
+          }
+        }
 
         const cd = (base: number) => base * (1 - Math.min(0.45, (lvl - 1) * 0.18));
         const dmg = (base: number) => base * (1 + (lvl - 1) * 0.4);
