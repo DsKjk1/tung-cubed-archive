@@ -57,7 +57,7 @@ export function ArenaGame() {
 
   // refs (mutable game state — kept outside React for perf)
   const stateRef = useRef({
-    px: ARENA_W / 2, py: ARENA_H / 2, pvx: 0, pvy: 0, pspd: 2.6,
+    px: ARENA_W / 2, py: ARENA_H / 2, pvx: 0, pvy: 0, pspd: 3.6,
     keys: new Set<string>(),
     enemies: [] as Enemy[],
     projectiles: [] as Projectile[],
@@ -72,6 +72,7 @@ export function ArenaGame() {
     shake: 0,
     hp: 100,
     runningWave: false,
+    bossWave: false,
   });
 
   // Preload Mr Sahur
