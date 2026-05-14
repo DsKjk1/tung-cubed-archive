@@ -564,17 +564,53 @@ export function ArenaGame() {
       ctx.translate(sk, sk);
 
       // bg
-      ctx.fillStyle = "#03060d";
+      const bgGrad = ctx.createRadialGradient(ARENA_W / 2, ARENA_H / 2, 50, ARENA_W / 2, ARENA_H / 2, ARENA_W * 0.7);
+      bgGrad.addColorStop(0, "#08131f");
+      bgGrad.addColorStop(1, "#02050a");
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, ARENA_W, ARENA_H);
+      // animated diagonal energy cracks
+      const tNow = now / 1000;
+      for (let i = 0; i < 4; i++) {
+        const cy = ((i * 250 + tNow * 30) % (ARENA_H + 200)) - 100;
+        ctx.strokeStyle = `rgba(125,243,255,${0.05 + 0.04 * Math.sin(tNow * 2 + i)})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(ARENA_W, cy + 60);
+        ctx.stroke();
+      }
       // grid
-      ctx.strokeStyle = "rgba(80,180,255,0.08)";
+      ctx.strokeStyle = "rgba(80,180,255,0.1)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < ARENA_W; x += 40) {
+      for (let x = 0; x < ARENA_W; x += 50) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ARENA_H); ctx.stroke();
       }
-      for (let y = 0; y < ARENA_H; y += 40) {
+      for (let y = 0; y < ARENA_H; y += 50) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ARENA_W, y); ctx.stroke();
       }
+      // holographic boundary walls
+      ctx.strokeStyle = `rgba(125,243,255,${0.5 + 0.2 * Math.sin(tNow * 3)})`;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(4, 4, ARENA_W - 8, ARENA_H - 8);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(125,243,255,0.25)";
+      ctx.strokeRect(20, 20, ARENA_W - 40, ARENA_H - 40);
+      // corner cyber structures
+      const corner = (cx: number, cy: number) => {
+        ctx.strokeStyle = "rgba(125,243,255,0.5)";
+        ctx.beginPath();
+        ctx.moveTo(cx - 40, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy - 40);
+        ctx.stroke();
+      };
+      corner(60, 60); corner(ARENA_W - 60, 60); corner(60, ARENA_H - 60); corner(ARENA_W - 60, ARENA_H - 60);
+      // scrolling holographic ad
+      const adText = "▸ TUNG³ NET // SAHUR.SYS ONLINE // KEEP CALCULATING // ";
+      ctx.font = `18px "Share Tech Mono", monospace`;
+      ctx.fillStyle = "rgba(125,243,255,0.18)";
+      const adX = ((tNow * 60) % 600) - 600;
+      ctx.fillText(adText + adText, -adX, 30);
+      ctx.fillText(adText + adText, -adX + 200, ARENA_H - 14);
 
       // shield aura render
       const shield = ownedRef.find((w) => w.id === "shield");
