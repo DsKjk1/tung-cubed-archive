@@ -220,15 +220,17 @@ export function ArenaGame() {
             break;
           }
           case "shield": {
-            const tickRate = lvl >= 3 ? 0.25 : 0.5;
+            const tickRate = lvl >= 3 ? 0.18 : (lvl === 2 ? 0.28 : 0.35);
             if (w.t >= tickRate) {
               w.t = 0;
-              const radius = 70 + lvl * 18;
+              const radius = 88 + lvl * 26;
+              const dmgVal = dmg(18);
               s.enemies.forEach((e) => {
                 const d = Math.hypot(e.x - s.px, e.y - s.py);
                 if (d < radius + e.r) {
-                  e.hp -= dmg(8);
-                  s.dmg.push({ x: e.x, y: e.y, v: dmg(8), t: 1, crit: false });
+                  e.hp -= dmgVal;
+                  s.dmg.push({ x: e.x, y: e.y, v: dmgVal, t: 1, crit: false });
+                  s.sparkles.push({ x: e.x, y: e.y, t: 0.4, color: "#7df3ff" });
                 }
               });
             }
@@ -237,27 +239,28 @@ export function ArenaGame() {
           case "discs": {
             // Orbit visual handled in render; damage on contact
             const num = lvl >= 3 ? 6 : 2 + (lvl - 1);
-            const radius = 75;
-            const speed = 3 + lvl * 0.5;
+            const radius = 85 + lvl * 4;
+            const speed = 3.4 + lvl * 0.7;
             const angleBase = performance.now() / 1000 * speed;
+            const dmgVal = dmg(16);
             for (let i = 0; i < num; i++) {
               const a = angleBase + (i * Math.PI * 2) / num;
               const dx = s.px + Math.cos(a) * radius;
               const dy = s.py + Math.sin(a) * radius;
-              s.enemies.forEach((e) => {
-                if (Math.hypot(e.x - dx, e.y - dy) < e.r + 10) {
-                  if (w.t >= 0.2) {
-                    e.hp -= dmg(6);
-                    s.dmg.push({ x: e.x, y: e.y, v: dmg(6), t: 1, crit: false });
+              if (w.t >= 0.14) {
+                s.enemies.forEach((e) => {
+                  if (Math.hypot(e.x - dx, e.y - dy) < e.r + 14) {
+                    e.hp -= dmgVal;
+                    s.dmg.push({ x: e.x, y: e.y, v: dmgVal, t: 1, crit: false });
+                    s.sparkles.push({ x: dx, y: dy, t: 0.4, color: "#a3f7ff" });
                   }
-                }
-              });
-              // store for render
+                });
+              }
               (w as any).discs = (w as any).discs || [];
               (w as any).discs[i] = { x: dx, y: dy };
               (w as any).discCount = num;
             }
-            if (w.t >= 0.2) w.t = 0;
+            if (w.t >= 0.14) w.t = 0;
             break;
           }
           case "boomerang": {
