@@ -475,10 +475,6 @@ export function CricketGame() {
       ctx.stroke();
 
       // ===== Bowler (Mr Sahur) =====
-      const bowlerArmAng = phase === "windup"
-        ? Math.min(1, (now - (state.current as any).windupStart || 0) / 600)
-        : 0;
-      void bowlerArmAng;
       if (img) {
         ctx.save();
         ctx.shadowColor = "#ff6b6b"; ctx.shadowBlur = 18;
