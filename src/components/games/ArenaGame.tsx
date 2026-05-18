@@ -620,14 +620,42 @@ export function ArenaGame() {
       // shield aura render
       const shield = ownedRef.find((w) => w.id === "shield");
       if (shield) {
-        const radius = 70 + shield.level * 18;
+        const radius = 88 + shield.level * 26;
+        const pulse = 0.7 + 0.3 * Math.sin(tNow * 6);
+        // outer field
         const grad = ctx.createRadialGradient(s.px, s.py, 10, s.px, s.py, radius);
-        grad.addColorStop(0, "rgba(125,243,255,0.0)");
-        grad.addColorStop(1, "rgba(125,243,255,0.25)");
+        grad.addColorStop(0, "rgba(125,243,255,0.05)");
+        grad.addColorStop(0.7, `rgba(125,243,255,${0.18 * pulse})`);
+        grad.addColorStop(1, `rgba(125,243,255,${0.45 * pulse})`);
         ctx.fillStyle = grad;
         ctx.beginPath(); ctx.arc(s.px, s.py, radius, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "rgba(125,243,255,0.6)";
-        ctx.stroke();
+        // electric pulse rings
+        for (let i = 0; i < 3; i++) {
+          const r = ((tNow * 80 + i * radius / 3) % radius);
+          ctx.strokeStyle = `rgba(125,243,255,${0.4 * (1 - r / radius)})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(s.px, s.py, r, 0, Math.PI * 2); ctx.stroke();
+        }
+        // hot rim
+        ctx.strokeStyle = `rgba(163,247,255,${pulse})`;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 20;
+        ctx.beginPath(); ctx.arc(s.px, s.py, radius, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        // arcing bolts to enemies inside
+        s.enemies.forEach((e) => {
+          const d = Math.hypot(e.x - s.px, e.y - s.py);
+          if (d < radius + e.r) {
+            ctx.strokeStyle = `rgba(191,245,255,${0.4 + 0.4 * Math.random()})`;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(s.px, s.py);
+            const mx = (s.px + e.x) / 2 + (Math.random() - 0.5) * 30;
+            const my = (s.py + e.y) / 2 + (Math.random() - 0.5) * 30;
+            ctx.lineTo(mx, my); ctx.lineTo(e.x, e.y);
+            ctx.stroke();
+          }
+        });
       }
 
       // enemies
@@ -663,11 +691,38 @@ export function ArenaGame() {
         const discs = (w as any).discs as Array<{ x: number; y: number }> | undefined;
         const n = (w as any).discCount as number | undefined;
         if (discs && n) {
+          // orbit trail ring
+          ctx.strokeStyle = `rgba(125,243,255,${0.15 + 0.1 * Math.sin(tNow * 8)})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(s.px, s.py, 85 + w.level * 4, 0, Math.PI * 2);
+          ctx.stroke();
           for (let i = 0; i < n; i++) {
             const d = discs[i]; if (!d) continue;
-            ctx.fillStyle = "#7df3ff";
-            ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 14;
-            ctx.beginPath(); ctx.arc(d.x, d.y, 8, 0, Math.PI * 2); ctx.fill();
+            // outer glow
+            ctx.fillStyle = "rgba(125,243,255,0.25)";
+            ctx.beginPath(); ctx.arc(d.x, d.y, 18, 0, Math.PI * 2); ctx.fill();
+            // spin blades
+            const spin = tNow * 18 + i;
+            ctx.save();
+            ctx.translate(d.x, d.y);
+            ctx.rotate(spin);
+            ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 18;
+            ctx.fillStyle = "#bff5ff";
+            for (let k = 0; k < 4; k++) {
+              ctx.rotate(Math.PI / 2);
+              ctx.beginPath();
+              ctx.moveTo(0, 0);
+              ctx.lineTo(11, -3);
+              ctx.lineTo(13, 0);
+              ctx.lineTo(11, 3);
+              ctx.closePath();
+              ctx.fill();
+            }
+            // core
+            ctx.fillStyle = "#fff";
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
             ctx.shadowBlur = 0;
           }
         }
