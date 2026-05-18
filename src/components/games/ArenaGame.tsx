@@ -183,13 +183,15 @@ export function ArenaGame() {
             if (w.t >= cd(1.6) && nearest) {
               w.t = 0;
               const fire = (target: Enemy) => {
-                s.projectiles.push({ x: s.px, y: s.py, vx: 0, vy: 0, dmg: dmg(40), r: 6, life: 4, piercesLeft: 0, ricochetLeft: 0, ownerId: w.id, targetId: s.enemies.indexOf(target), splash: 60 + lvl * 10, hitSet: new Set(), lastHit: -1, color: "#ff7a3d" });
+                s.projectiles.push({ x: s.px, y: s.py, vx: 0, vy: 0, dmg: dmg(95), r: 9, life: 4, piercesLeft: 0, ricochetLeft: 0, ownerId: w.id, targetId: s.enemies.indexOf(target), splash: 110 + lvl * 28, hitSet: new Set(), lastHit: -1, color: "#ff7a3d" });
               };
               fire(nearest);
               if (lvl >= 3) {
-                const second = s.enemies.filter(e => e !== nearest)[0];
-                if (second) fire(second);
+                const others = s.enemies.filter(e => e !== nearest);
+                if (others[0]) fire(others[0]);
+                if (others[1]) fire(others[1]);
               }
+              s.shake = Math.max(s.shake, 4);
             }
             break;
           }
@@ -218,15 +220,17 @@ export function ArenaGame() {
             break;
           }
           case "shield": {
-            const tickRate = lvl >= 3 ? 0.25 : 0.5;
+            const tickRate = lvl >= 3 ? 0.18 : (lvl === 2 ? 0.28 : 0.35);
             if (w.t >= tickRate) {
               w.t = 0;
-              const radius = 70 + lvl * 18;
+              const radius = 88 + lvl * 26;
+              const dmgVal = dmg(18);
               s.enemies.forEach((e) => {
                 const d = Math.hypot(e.x - s.px, e.y - s.py);
                 if (d < radius + e.r) {
-                  e.hp -= dmg(8);
-                  s.dmg.push({ x: e.x, y: e.y, v: dmg(8), t: 1, crit: false });
+                  e.hp -= dmgVal;
+                  s.dmg.push({ x: e.x, y: e.y, v: dmgVal, t: 1, crit: false });
+                  s.sparkles.push({ x: e.x, y: e.y, t: 0.4, color: "#7df3ff" });
                 }
               });
             }
@@ -235,27 +239,28 @@ export function ArenaGame() {
           case "discs": {
             // Orbit visual handled in render; damage on contact
             const num = lvl >= 3 ? 6 : 2 + (lvl - 1);
-            const radius = 75;
-            const speed = 3 + lvl * 0.5;
+            const radius = 85 + lvl * 4;
+            const speed = 3.4 + lvl * 0.7;
             const angleBase = performance.now() / 1000 * speed;
+            const dmgVal = dmg(16);
             for (let i = 0; i < num; i++) {
               const a = angleBase + (i * Math.PI * 2) / num;
               const dx = s.px + Math.cos(a) * radius;
               const dy = s.py + Math.sin(a) * radius;
-              s.enemies.forEach((e) => {
-                if (Math.hypot(e.x - dx, e.y - dy) < e.r + 10) {
-                  if (w.t >= 0.2) {
-                    e.hp -= dmg(6);
-                    s.dmg.push({ x: e.x, y: e.y, v: dmg(6), t: 1, crit: false });
+              if (w.t >= 0.14) {
+                s.enemies.forEach((e) => {
+                  if (Math.hypot(e.x - dx, e.y - dy) < e.r + 14) {
+                    e.hp -= dmgVal;
+                    s.dmg.push({ x: e.x, y: e.y, v: dmgVal, t: 1, crit: false });
+                    s.sparkles.push({ x: dx, y: dy, t: 0.4, color: "#a3f7ff" });
                   }
-                }
-              });
-              // store for render
+                });
+              }
               (w as any).discs = (w as any).discs || [];
               (w as any).discs[i] = { x: dx, y: dy };
               (w as any).discCount = num;
             }
-            if (w.t >= 0.2) w.t = 0;
+            if (w.t >= 0.14) w.t = 0;
             break;
           }
           case "boomerang": {
@@ -615,14 +620,42 @@ export function ArenaGame() {
       // shield aura render
       const shield = ownedRef.find((w) => w.id === "shield");
       if (shield) {
-        const radius = 70 + shield.level * 18;
+        const radius = 88 + shield.level * 26;
+        const pulse = 0.7 + 0.3 * Math.sin(tNow * 6);
+        // outer field
         const grad = ctx.createRadialGradient(s.px, s.py, 10, s.px, s.py, radius);
-        grad.addColorStop(0, "rgba(125,243,255,0.0)");
-        grad.addColorStop(1, "rgba(125,243,255,0.25)");
+        grad.addColorStop(0, "rgba(125,243,255,0.05)");
+        grad.addColorStop(0.7, `rgba(125,243,255,${0.18 * pulse})`);
+        grad.addColorStop(1, `rgba(125,243,255,${0.45 * pulse})`);
         ctx.fillStyle = grad;
         ctx.beginPath(); ctx.arc(s.px, s.py, radius, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "rgba(125,243,255,0.6)";
-        ctx.stroke();
+        // electric pulse rings
+        for (let i = 0; i < 3; i++) {
+          const r = ((tNow * 80 + i * radius / 3) % radius);
+          ctx.strokeStyle = `rgba(125,243,255,${0.4 * (1 - r / radius)})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(s.px, s.py, r, 0, Math.PI * 2); ctx.stroke();
+        }
+        // hot rim
+        ctx.strokeStyle = `rgba(163,247,255,${pulse})`;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 20;
+        ctx.beginPath(); ctx.arc(s.px, s.py, radius, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        // arcing bolts to enemies inside
+        s.enemies.forEach((e) => {
+          const d = Math.hypot(e.x - s.px, e.y - s.py);
+          if (d < radius + e.r) {
+            ctx.strokeStyle = `rgba(191,245,255,${0.4 + 0.4 * Math.random()})`;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(s.px, s.py);
+            const mx = (s.px + e.x) / 2 + (Math.random() - 0.5) * 30;
+            const my = (s.py + e.y) / 2 + (Math.random() - 0.5) * 30;
+            ctx.lineTo(mx, my); ctx.lineTo(e.x, e.y);
+            ctx.stroke();
+          }
+        });
       }
 
       // enemies
@@ -658,11 +691,38 @@ export function ArenaGame() {
         const discs = (w as any).discs as Array<{ x: number; y: number }> | undefined;
         const n = (w as any).discCount as number | undefined;
         if (discs && n) {
+          // orbit trail ring
+          ctx.strokeStyle = `rgba(125,243,255,${0.15 + 0.1 * Math.sin(tNow * 8)})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(s.px, s.py, 85 + w.level * 4, 0, Math.PI * 2);
+          ctx.stroke();
           for (let i = 0; i < n; i++) {
             const d = discs[i]; if (!d) continue;
-            ctx.fillStyle = "#7df3ff";
-            ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 14;
-            ctx.beginPath(); ctx.arc(d.x, d.y, 8, 0, Math.PI * 2); ctx.fill();
+            // outer glow
+            ctx.fillStyle = "rgba(125,243,255,0.25)";
+            ctx.beginPath(); ctx.arc(d.x, d.y, 18, 0, Math.PI * 2); ctx.fill();
+            // spin blades
+            const spin = tNow * 18 + i;
+            ctx.save();
+            ctx.translate(d.x, d.y);
+            ctx.rotate(spin);
+            ctx.shadowColor = "#7df3ff"; ctx.shadowBlur = 18;
+            ctx.fillStyle = "#bff5ff";
+            for (let k = 0; k < 4; k++) {
+              ctx.rotate(Math.PI / 2);
+              ctx.beginPath();
+              ctx.moveTo(0, 0);
+              ctx.lineTo(11, -3);
+              ctx.lineTo(13, 0);
+              ctx.lineTo(11, 3);
+              ctx.closePath();
+              ctx.fill();
+            }
+            // core
+            ctx.fillStyle = "#fff";
+            ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
             ctx.shadowBlur = 0;
           }
         }
