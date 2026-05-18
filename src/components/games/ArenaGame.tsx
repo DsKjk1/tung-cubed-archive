@@ -183,13 +183,15 @@ export function ArenaGame() {
             if (w.t >= cd(1.6) && nearest) {
               w.t = 0;
               const fire = (target: Enemy) => {
-                s.projectiles.push({ x: s.px, y: s.py, vx: 0, vy: 0, dmg: dmg(40), r: 6, life: 4, piercesLeft: 0, ricochetLeft: 0, ownerId: w.id, targetId: s.enemies.indexOf(target), splash: 60 + lvl * 10, hitSet: new Set(), lastHit: -1, color: "#ff7a3d" });
+                s.projectiles.push({ x: s.px, y: s.py, vx: 0, vy: 0, dmg: dmg(95), r: 9, life: 4, piercesLeft: 0, ricochetLeft: 0, ownerId: w.id, targetId: s.enemies.indexOf(target), splash: 110 + lvl * 28, hitSet: new Set(), lastHit: -1, color: "#ff7a3d" });
               };
               fire(nearest);
               if (lvl >= 3) {
-                const second = s.enemies.filter(e => e !== nearest)[0];
-                if (second) fire(second);
+                const others = s.enemies.filter(e => e !== nearest);
+                if (others[0]) fire(others[0]);
+                if (others[1]) fire(others[1]);
               }
+              s.shake = Math.max(s.shake, 4);
             }
             break;
           }
