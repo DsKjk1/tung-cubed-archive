@@ -1,0 +1,115 @@
+import type { TopicContent } from "./types";
+
+export const threats: TopicContent = {
+  slug: "threats",
+  hero:
+    "Digital systems face constant attack from malware, social engineering, brute-force attempts and denial-of-service campaigns. This module breaks down the major threats and how they work.",
+  tags: ["MALWARE", "PHISHING", "SOCIAL ENG", "BRUTE FORCE", "DoS", "INSIDER"],
+  sections: [
+    {
+      id: "malware",
+      code: "01",
+      title: "Malware",
+      explanation:
+        "Malware is malicious software designed to damage, disrupt or gain unauthorised access to a system. It comes in many forms.",
+      bullets: [
+        "Virus — attaches to files, spreads when files are run.",
+        "Worm — spreads itself across networks without help.",
+        "Trojan — disguised as legitimate software.",
+        "Ransomware — encrypts files and demands payment.",
+        "Spyware — secretly collects information about the user.",
+        "Adware — bombards the user with advertisements.",
+        "Rootkit — hides itself deep in the system.",
+      ],
+      paragraphs: [
+        "Ransomware has become a top threat: attackers encrypt all your files and demand cryptocurrency to unlock them. Hospitals, councils and schools have all been hit.",
+        "Trojans are dangerous because they trick the user into installing them. The user clicks 'install' and the attacker is welcomed in.",
+      ],
+      quiz: [
+        { q: "A worm differs from a virus because it…", options: ["Spreads itself across networks without user help", "Needs a host file", "Only attacks Wi-Fi", "Always shows pop-ups"], answer: 0, why: "Worms self-propagate." },
+        { q: "Ransomware typically…", options: ["Encrypts files and demands payment", "Speeds up the PC", "Repairs drivers", "Sends free music"], answer: 0, why: "Definition." },
+        { q: "Trojan malware…", options: ["Disguises as legitimate software", "Lives in the keyboard", "Cannot be installed", "Repairs the OS"], answer: 0, why: "Disguise tricks the user." },
+        { q: "Spyware…", options: ["Secretly collects user data", "Cools the CPU", "Repairs files", "Encrypts files"], answer: 0, why: "Stealth data theft." },
+        { q: "Adware floods the user with…", options: ["Advertisements", "Updates", "Security patches", "Music"], answer: 0, why: "Definition." },
+        { q: "Rootkits are dangerous because they…", options: ["Hide deep in the system", "Always pop up", "Need physical access", "Repair sectors"], answer: 0, why: "Hard to detect or remove." },
+        { q: "Which malware most needs user action to install?", options: ["Trojan", "Worm", "Network virus", "Auto-spreading exploit"], answer: 0, why: "Disguised installs depend on the user." },
+        { q: "True/False: ransomware payments guarantee file recovery.", options: ["True", "False"], answer: 1, why: "No guarantee — attackers may not decrypt." },
+        { q: "Which is NOT malware?", options: ["Trojan", "Worm", "Adware", "Firewall"], answer: 3, why: "Firewall is a defence." },
+        { q: "Hospitals hit by ransomware suffer…", options: ["Disruption of patient care", "Better Wi-Fi", "Free upgrades", "Nothing"], answer: 0, why: "Real-world impact." },
+      ],
+    },
+    {
+      id: "social",
+      code: "02",
+      title: "Social Engineering",
+      explanation:
+        "Social engineering attacks target people, not systems. They trick humans into giving away credentials or doing the attacker's work for them.",
+      bullets: [
+        "Phishing — fake emails/sites that look genuine.",
+        "Spear phishing — targeted phishing against one person.",
+        "Vishing — phishing by phone.",
+        "Smishing — phishing by SMS.",
+        "Pretexting — invented scenario to extract info.",
+        "Pharming — redirecting users to fake websites.",
+        "Shoulder surfing — peeking at someone's screen/PIN.",
+      ],
+      paragraphs: [
+        "Phishing emails copy real brand designs and create urgency: 'Your account will be closed in 24 hours.' Panic pushes users to click before they think.",
+        "Even tech-savvy users get caught. The fix is process: verify by another channel, never click links in suspicious emails, use 2FA so a stolen password isn't enough.",
+      ],
+      quiz: [
+        { q: "Phishing targets…", options: ["People, not systems", "Only CPUs", "Routers only", "Only servers"], answer: 0, why: "Tricks the human." },
+        { q: "Spear phishing is…", options: ["Targeted phishing against a specific person/org", "Email spam at random", "Random pop-ups", "Spyware"], answer: 0, why: "Targeted variant." },
+        { q: "Vishing uses…", options: ["Voice / phone calls", "Email only", "SMS only", "QR codes only"], answer: 0, why: "Voice phishing." },
+        { q: "Smishing uses…", options: ["SMS text messages", "Voice calls", "Print mail", "Carrier pigeons"], answer: 0, why: "SMS-based phishing." },
+        { q: "Pretexting is…", options: ["Invented scenario to extract info", "A type of antivirus", "A new licence", "Free software"], answer: 0, why: "Manufactured story." },
+        { q: "Pharming…", options: ["Redirects users to fake websites", "Grows crops", "Updates firmware", "Improves DNS speed"], answer: 0, why: "DNS / host file manipulation." },
+        { q: "Shoulder surfing is…", options: ["Looking at someone's screen/PIN nearby", "Surfing the web", "Hacking remote routers", "Using a VPN"], answer: 0, why: "Physical observation." },
+        { q: "Why are phishing emails effective?", options: ["They create urgency and look real", "They are clearly fake", "They arrive once per year", "They don't include links"], answer: 0, why: "Urgency + familiar branding." },
+        { q: "True/False: tech-savvy users never fall for phishing.", options: ["True", "False"], answer: 1, why: "Anyone can be tricked." },
+        { q: "Best defence combo against phishing…", options: ["Verify by separate channel + use 2FA", "Click everything", "Reply with credentials", "Disable email"], answer: 0, why: "Process and layered defence." },
+      ],
+    },
+    {
+      id: "bruteforce-dos",
+      code: "03",
+      title: "Brute Force & DoS Attacks",
+      explanation:
+        "Brute-force attacks try every possible password until they succeed. Denial-of-Service (DoS) attacks try to overwhelm a system so legitimate users can't reach it.",
+      bullets: [
+        "Brute force — trying many passwords until one works.",
+        "Dictionary attack — uses lists of common passwords/words.",
+        "DoS — single source flooding a target.",
+        "DDoS — many sources flooding a target (botnet).",
+        "Insider threats — staff with access cause damage.",
+      ],
+      paragraphs: [
+        "Short, simple passwords fall to brute-force in seconds. Long passphrases with mixed character types take billions of years to crack at current speeds.",
+        "DDoS attacks use armies of infected machines (botnets) to overwhelm sites. Even huge platforms can be temporarily knocked offline.",
+        "Insider threats are tough to defend against because the attacker already has legitimate access. Monitoring, role separation and the principle of least privilege all help.",
+      ],
+      quiz: [
+        { q: "Brute force tries…", options: ["Many passwords until one works", "Only one password forever", "Only encryption keys at random", "Only PINs of length 1"], answer: 0, why: "Exhaustive search." },
+        { q: "A dictionary attack uses…", options: ["Lists of common words/passwords", "Only emojis", "Only numbers 1–9", "Only TLS keys"], answer: 0, why: "Word-list based." },
+        { q: "DoS attack stands for…", options: ["Denial of Service", "Disk on System", "Domain of Server", "Display of Status"], answer: 0, why: "Definition." },
+        { q: "DDoS uses…", options: ["Many machines (botnet) attacking together", "One PC", "Phones only", "A printer"], answer: 0, why: "Distributed." },
+        { q: "Why are long passphrases safer?", options: ["More combinations to try", "They look nice", "They run faster", "They use less storage"], answer: 0, why: "Search space grows exponentially." },
+        { q: "Botnets are…", options: ["Networks of infected devices", "Friendly bots", "Free Wi-Fi", "Old PCs"], answer: 0, why: "Used in DDoS." },
+        { q: "Insider threats are dangerous because…", options: ["Attacker already has access", "They are loud", "They are obvious", "They never happen"], answer: 0, why: "Trust + access = risk." },
+        { q: "Least privilege means…", options: ["Give each user the minimum access needed", "Give admin to everyone", "Give nobody access", "Random privileges"], answer: 0, why: "Limits blast radius." },
+        { q: "True/False: even big platforms can be knocked offline by DDoS.", options: ["True", "False"], answer: 0, why: "Scale of botnets can overwhelm them." },
+        { q: "Best defence against brute force on a single account…", options: ["Long passphrase + rate limiting + 2FA", "Short PIN", "No password", "Common password"], answer: 0, why: "Layered defence." },
+      ],
+    },
+  ],
+  flashcards: [
+    { category: "MALWARE", front: "Virus vs Worm", back: "Virus needs a host file and user action; worm spreads itself across networks." },
+    { category: "MALWARE", front: "Ransomware", back: "Encrypts user files and demands payment (often crypto) for decryption." },
+    { category: "MALWARE", front: "Trojan / Spyware / Adware / Rootkit", back: "Trojan = disguised; Spyware = secret data theft; Adware = floods adverts; Rootkit = hides deep in system." },
+    { category: "SOCIAL", front: "Phishing / Spear / Vishing / Smishing", back: "Email / targeted email / voice / SMS attempts to trick users into revealing info." },
+    { category: "SOCIAL", front: "Pharming vs Pretexting vs Shoulder surfing", back: "Fake website redirect / invented scenario / looking at someone's screen or PIN." },
+    { category: "BRUTE", front: "Brute force vs Dictionary attack", back: "Try every combination vs try common words/passwords from a list." },
+    { category: "DoS", front: "DoS vs DDoS", back: "DoS = one source flooding a target; DDoS = many sources (botnet) flooding a target." },
+    { category: "INSIDER", front: "Insider threat defence", back: "Least privilege, monitoring, role separation, audit logs." },
+  ],
+};
