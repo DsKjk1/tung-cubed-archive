@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/lib/theme";
 import { Navbar } from "@/components/Navbar";
 import { MrSahur } from "@/components/MrSahur";
+import { Atmosphere } from "@/components/Atmosphere";
 
 function NotFoundComponent() {
   return (
@@ -86,9 +87,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <div className="scanlines min-h-screen bg-background text-foreground">
+        <div className="scanlines min-h-screen bg-background text-foreground relative">
+          <Atmosphere />
           <Navbar />
-          <Outlet />
+          <div className="relative z-10">
+            <Outlet />
+          </div>
           <MrSahur />
           <footer className="border-t mt-16 py-6 text-center font-mono text-[11px] text-muted-foreground">
             ── TUNG³ ARCHIVE // last_sync: {new Date().getFullYear()} // est. by SAHUR_CLASS ──

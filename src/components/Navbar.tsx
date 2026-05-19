@@ -2,9 +2,11 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useTheme, Theme } from "@/lib/theme";
 
 const themes: { id: Theme; label: string }[] = [
-  { id: "cyber", label: "CYBER" },
-  { id: "light", label: "LIGHT" },
+  { id: "cyber", label: "CYBR" },
+  { id: "light", label: "LITE" },
   { id: "vintage", label: "VNTG" },
+  { id: "tung", label: "TUNG" },
+  { id: "frost", label: "FRST" },
 ];
 
 const links = [
@@ -60,7 +62,7 @@ export function Navbar() {
             <button
               key={t.id}
               onClick={() => setTheme(t.id)}
-              className={`px-2 py-1 border hover:border-primary hover:text-primary transition ${
+              className={`px-1.5 py-1 border hover:border-primary hover:text-primary transition text-[10px] ${
                 theme === t.id ? "border-primary text-primary glow-text" : "border-border text-muted-foreground"
               }`}
             >
@@ -69,7 +71,6 @@ export function Navbar() {
           ))}
         </div>
       </div>
-      {/* Mobile nav strip */}
       <div className="lg:hidden border-t overflow-x-auto">
         <div className="flex gap-1 px-2 py-1 font-mono text-[10px] whitespace-nowrap">
           {links.map((l) => {

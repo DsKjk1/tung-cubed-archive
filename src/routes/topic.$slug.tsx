@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { topics } from "@/lib/topics";
-import { EnvironmentalIssues } from "@/content/EnvironmentalIssues";
-import { TopicStub } from "@/content/TopicStub";
+import { TopicBuilder } from "@/components/TopicPageBuilder";
+import { getTopicContent } from "@/content/topics";
 
 export const Route = createFileRoute("/topic/$slug")({
   component: TopicPage,
@@ -32,6 +32,8 @@ export const Route = createFileRoute("/topic/$slug")({
 
 function TopicPage() {
   const { topic } = Route.useLoaderData();
+  const content = getTopicContent(topic.slug);
+
   return (
     <main className="font-mono lg:pr-[20rem]">
       <header className="border-b">
@@ -50,10 +52,14 @@ function TopicPage() {
         </div>
       </header>
 
-      {topic.slug === "environmental-issues" ? (
-        <EnvironmentalIssues />
+      {content ? (
+        <TopicBuilder content={content} />
       ) : (
-        <TopicStub topic={topic} />
+        <section className="mx-auto max-w-3xl px-4 py-12 font-mono">
+          <div className="ascii-frame p-6 text-center text-muted-foreground">
+            Module content not yet indexed.
+          </div>
+        </section>
       )}
     </main>
   );
