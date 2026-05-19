@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-export type Theme = "cyber" | "light" | "vintage";
+export type Theme = "cyber" | "light" | "vintage" | "tung" | "frost";
 
 interface ThemeCtx {
   theme: Theme;
@@ -8,6 +8,8 @@ interface ThemeCtx {
 }
 
 const Ctx = createContext<ThemeCtx>({ theme: "cyber", setTheme: () => {} });
+
+const ALL_THEME_CLASSES = ["theme-light", "theme-vintage", "theme-tung", "theme-frost"];
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("cyber");
@@ -20,9 +22,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
-    root.classList.remove("theme-light", "theme-vintage");
-    if (theme === "light") root.classList.add("theme-light");
-    if (theme === "vintage") root.classList.add("theme-vintage");
+    root.classList.remove(...ALL_THEME_CLASSES);
+    if (theme !== "cyber") root.classList.add(`theme-${theme}`);
+    root.style.transition = "background-color 600ms ease, color 600ms ease";
     localStorage.setItem("tung-theme", theme);
   }, [theme]);
 
